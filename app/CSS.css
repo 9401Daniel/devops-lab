@@ -1,0 +1,193 @@
+/* Estilos generales */
+body {
+    background-color: gainsboro;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header y navegación */
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+nav {
+    border: solid 2px #666;
+    border-radius: 10px;
+    background-color: gray;
+    padding: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin: 5px;
+    display: inline-block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: #555;
+}
+
+/* Imagen principal */
+.imagen {
+    width: 100%;
+    max-width: 1320px;
+    height: auto;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+/* Formularios */
+#Pacienteform,
+#Doctorform,
+#Citamedicaform {
+    padding: 25px;
+    border: solid 3px #666;
+    border-radius: 10px;
+    background-color: white;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+legend {
+    border: solid 1px #666;
+    border-radius: 15px;
+    background-color: grey;
+    color: white;
+    padding: 10px 20px;
+}
+
+/* Inputs */
+input, select {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus {
+    border-color: #666;
+    outline: none;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Botones */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 30px;
+    margin: 20px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button[onclick*="eliminar"],
+button[onclick*="cancelar"] {
+    background-color: #f44336;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+button[onclick*="eliminar"]:hover,
+button[onclick*="cancelar"]:hover {
+    background-color: #da190b;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background-color: #666;
+    color: white;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Main container */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+main h2 {
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #666;
+    padding-bottom: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav a {
+        display: block;
+        margin: 5px 0;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px;
+    }
+    
+    input, select {
+        width: 100%;
+    }
+}

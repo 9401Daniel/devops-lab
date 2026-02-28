@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REGISTRO CITAS MÉDICAS</title>
+
+  <link href="./CSS.css" rel="stylesheet">
+
+</head>
+<body>
+
+  <header>
+    <h1>REGISTRO PACIENTES Y DOCTORES</h1>
+    <nav>
+      <a href="Pacientesydoctores.html">Inicio</a>
+      <a href="./RegistroDoctores.html">Registro Doctores</a>
+      <a href="./RegistroPacientes.html">Registro Pacientes</a>
+      <a href="./Registrocitamedica.html">Registro Citas Médicas</a>
+      <a href="./ListaDoctores.html">Lista Doctores</a>
+      <a href="./ListaPacientes.html">Lista Pacientes</a>
+      <a href="./ListaCitas.html">Lista Citas</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Registro Cita Médica</h2>
+    <form id="Citamedicaform">
+      <label for="NumeroDPaciente">Número Documento paciente:</label>
+      <input type="text" id="NumeroDPaciente" placeholder="Ingrese la cédula del paciente" required> <br>
+
+      <label for="EspecialidadRequerida">Especialidad Requerida:</label>
+      <select name="EspecialidadRequerida" id="EspecialidadRequerida" required>
+        <option value="Blanco">Seleccione una especialidad</option>
+        <option value="MedicinaGeneral">Medicina General</option>
+        <option value="Cardiologia">Cardiología</option>
+        <option value="MedicinaInterna">Medicina interna</option>
+        <option value="Dermatologia">Dermatología</option>
+        <option value="RehabilitacionFisica">Rehabilitación física</option>
+        <option value="Psicologia">Psicología</option>
+        <option value="Odontologia">Odontología</option>
+        <option value="Radiologia">Radiología</option>
+      </select> <br>
+
+      <label for="FechaCita">Fecha de la cita:</label>
+      <input type="date" id="FechaCita" required> <br>
+
+      <label for="HoraCita">Hora de la cita:</label>
+      <input type="time" id="HoraCita" required> <br>
+
+      <button type="submit">Registrar Cita</button> <br>
+    </form>
+  </main>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
+  integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="./JScitaspacientes.js"></script>
+</html>

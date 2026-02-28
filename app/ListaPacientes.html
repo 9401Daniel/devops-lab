@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LISTA PACIENTES</title>
+
+  <link href="./CSS.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <header>
+    <h1>LISTA PACIENTES</h1>
+    <nav>
+      <a href="Pacientesydoctores.html">Inicio</a>
+      <a href="./RegistroDoctores.html">Registro Doctores</a>
+      <a href="./RegistroPacientes.html">Registro Pacientes</a>
+      <a href="./Registrocitamedica.html">Registro Citas Médicas</a>
+      <a href="./ListaDoctores.html">Lista Doctores</a>
+      <a href="./ListaPacientes.html">Lista Pacientes</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Pacientes Registrados</h2>
+    <table id="PacienteTable">
+      <thead>
+        <tr>
+          <th>Nombre Completo</th>
+          <th>Cédula</th>
+          <th>Edad</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="6">Cargando pacientes...</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="./JSpacientes.js"></script>
+
+</html>
