@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Login to ACR
+        run: az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:${{ github.sha }} .
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:${{ github.sha }}
+          docker tag ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:${{ github.sha }} ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:latest
+
+      - name: Update Kubernetes deployment
+        run: |
+          sed -i "s|image:.*|image: ${{ secrets.ACR_NAME }}.azurecr.io/devops-lab-app:${{ github.sha }}|g" kubernetes/deployment.yaml
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add kubernetes/deployment.yaml
+          git commit -m "ci: update image to ${{ github.sha }}"
+          git push
