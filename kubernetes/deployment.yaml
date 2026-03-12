@@ -14,8 +14,11 @@ spec:
       labels:
         app: devops-lab-app
     spec:
+      imagePullSecrets:
+        - name: acr-secret
       containers:
-      - name: devops-lab-app
-        image: acrdevopslab2025daniel.azurecr.io/devops-lab-app:0a4f6c82d3bdaa62c849c805d777a92a3ccf1392
-        ports:
-        - containerPort: 80
+        - name: devops-lab-app
+          image: acrdevopslab2025daniel.azurecr.io/devops-lab-app:latest
+          ports:
+            - containerPort: 80
+    
