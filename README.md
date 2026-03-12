@@ -125,7 +125,7 @@ devops-lab/
 - [x] Dockerfile creado con Nginx alpine
 - [x] Imagen construida localmente (26 MB)
 - [x] Imagen subida al ACR
-- [x] Permisos AKS-ACR configurados
+- [x] imagePullSecret configurado en deployment.yaml
 
 ### 5. Despliegue en Kubernetes
 - [x] deployment.yaml y service.yaml creados
@@ -144,7 +144,9 @@ devops-lab/
 
 ## Pendientes
 
-- [ ] HTTPS con cert-manager y nip.io
+- [ ] Instalar Helm en la VM
+- [ ] Monitoreo con Prometheus + Grafana + Alertmanager (via Helm)
+- [ ] HTTPS con cert-manager y nip.io (via Helm)
 - [ ] Integrar Cosmos DB con la app (reemplazar almacenamiento local en JSON)
 - [ ] Estructura multi-ambiente: dev / staging / prod en Terraform
 - [ ] Chaos Engineering con Litmus Chaos (simulacion de fallas)
@@ -157,39 +159,62 @@ devops-lab/
 ### Levantar toda la infraestructura
 
 ```bash
-# 1. Conectarse a la VM
+# 1. Encender la VM desde portal.azure.com
+# Maquinas virtuales -> vm-control-devops -> Iniciar
+
+# 2. Conectarse a la VM
 ssh -i "/Users/daniel/Documents/PERSONAL PROJECTs/Devops CI:CD/vm-control-devops_key.pem" azureuser@<IP_VM>
 
-# 2. Actualizar el repo local
+# 3. Actualizar el repo local
 cd ~/devops-lab
 git pull
 
-# 3. Levantar infraestructura con Terraform
+# 4. Levantar infraestructura con Terraform
 cd ~/devops-lab/terraform
 terraform init
 terraform apply
 
-# 4. Reconectar kubectl al AKS
+# 5. Reconectar kubectl al AKS
 az aks get-credentials --resource-group rg-devops-lab --name aks-devops-lab
 
-# 5. Verificar que el nodo esta listo
+# 6. Verificar que el nodo esta listo
 kubectl get nodes
 
-# 6. Reinstalar Argo CD
+# 7. Crear el secret de acceso al ACR (obligatorio despues de cada terraform apply)
+az acr update -n acrdevopslab2025daniel --admin-enabled true
+
+ACR_USERNAME=$(az acr credential show -n acrdevopslab2025daniel --query username -o tsv)
+ACR_PASSWORD=$(az acr credential show -n acrdevopslab2025daniel --query passwords[0].value -o tsv)
+
+kubectl create secret docker-registry acr-secret \
+  --docker-server=acrdevopslab2025daniel.azurecr.io \
+  --docker-username=$ACR_USERNAME \
+  --docker-password=$ACR_PASSWORD
+
+# 8. Verificar que la imagen existe en el ACR
+az acr repository list --name acrdevopslab2025daniel --output table
+
+# Si el ACR esta vacio (terraform destroy borra las imagenes), reconstruir y subir:
+az acr login --name acrdevopslab2025daniel
+cd ~/devops-lab
+docker build -t acrdevopslab2025daniel.azurecr.io/devops-lab-app:latest .
+docker push acrdevopslab2025daniel.azurecr.io/devops-lab-app:latest
+
+# 9. Reinstalar Argo CD
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.13.0/manifests/install.yaml
 
 # Esperar 2-3 minutos y verificar pods
 kubectl get pods -n argocd
 
-# 7. Aplicar manifiestos de Kubernetes
+# 10. Aplicar manifiestos de Kubernetes
 cd ~/devops-lab
 kubectl apply -f kubernetes/
 
-# 8. Obtener IP publica de la app
+# 11. Obtener IP publica de la app
 kubectl get service devops-lab-app
 
-# 9. Acceder a la UI de Argo CD
+# 12. Acceder a la UI de Argo CD
 # En la VM:
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
@@ -198,7 +223,8 @@ ssh -i "/Users/daniel/Documents/PERSONAL PROJECTs/Devops CI:CD/vm-control-devops
 
 # Abrir en el navegador: https://localhost:8080
 # Usuario: admin
-# Password: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+# Password:
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
 ### Destruir todo para evitar costos
@@ -210,6 +236,14 @@ terraform destroy
 # Luego apagar la VM desde el portal de Azure
 # portal.azure.com -> Maquinas virtuales -> vm-control-devops -> Detener
 ```
+
+---
+
+## Notas Importantes
+
+El ACR pierde todas las imagenes cuando se hace terraform destroy. Siempre verificar con `az acr repository list` antes de aplicar los manifiestos y reconstruir la imagen si es necesario.
+
+El secret acr-secret vive dentro del cluster AKS. Como el cluster se destruye con terraform destroy, el secret hay que recrearlo en cada sesion. El deployment.yaml ya tiene configurado imagePullSecrets para usarlo automaticamente.
 
 ---
 
@@ -233,6 +267,8 @@ terraform destroy
 **Un solo nodo en AKS:** Para minimizar costos en el ambiente de laboratorio. En produccion se usarian al menos 3 nodos distribuidos en zonas de disponibilidad diferentes.
 
 **GitOps con Argo CD:** Ningun cambio se aplica directamente al cluster. Todo cambio pasa por GitHub y Argo CD lo despliega automaticamente. Esto permite auditoria completa, rollbacks faciles y elimina el acceso humano directo a produccion.
+
+**imagePullSecret en lugar de managed identity:** El secret acr-secret con credenciales de admin del ACR es mas confiable que los permisos de managed identity de AKS, que pueden tardar en propagarse o no aplicar correctamente despues de recrear el cluster.
 
 ---
 
